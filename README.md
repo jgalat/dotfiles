@@ -1,4 +1,4 @@
-# .dotfiles
+# .dotfiles [![Build Status](https://travis-ci.com/jgalat/.dotfiles.svg?branch=master)](https://travis-ci.com/jgalat/.dotfiles)
 My dotfiles including patched versions of `dmenu`, `dwm` and `st`.
 
 ## Installation
