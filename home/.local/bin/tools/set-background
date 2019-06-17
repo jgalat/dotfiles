@@ -1,0 +1,5 @@
+#!/bin/sh
+
+[ -n "$1" ] && feh --bg-scale "$1"
+# shellcheck disable=SC1090
+[ -f "$HOME/.fehbg" ] && . ~/.fehbg

@@ -1,0 +1,55 @@
+#!/bin/sh
+
+dt() {
+  printf "[%s]" "$(date +"%d/%m/%Y %H:%M")"
+}
+
+bat() {
+  acpi="$(acpi -b)"
+  status="$(echo "${acpi}" | awk '{print substr($3,1,1)}')"
+  capacity="$(echo "${acpi}" | awk '{print $4}' | tr -dc '0-9')"
+  remaining="$(echo "${acpi}" | awk '{print substr($5,1,5)}')"
+  if [ "${status}" = "C" ]; then
+    colorize="\x01"
+  elif [ "${capacity}" -lt 20 ]; then
+    colorize="\x05"
+  elif [ "${capacity}" -lt 40 ]; then
+    colorize="\x04"
+  fi
+  printf "%s" "${colorize}[${status} ${capacity}% (${remaining})]\x01"
+}
+
+conn() {
+  ifaces="enp2s0 wlp1s0"
+  iface_status=""
+  for iface in $ifaces; do
+    status="$(cat /sys/class/net/"${iface}"/operstate)"
+    if [ "${status}" = "up" ]; then
+      iface_status="${iface_status} ${iface}: ${status}"
+    fi
+  done
+  iface_status="$(echo "${iface_status}" | sed "s/^[[:space:]]//")"
+  colorize=$(ping -q -w1 -c1 8.8.8.8 > /dev/null 2>&1 && echo '\x03' || echo '\x05')
+  printf "%s" "${colorize}[${iface_status}]\x01"
+}
+
+vol() {
+  master="$(amixer -c 1 get Master)"
+  volume="$(echo "${master}" | grep -o '[0-9]*%')"
+  status="$(echo "${master}" | grep -o '\[on\]\|\[off\]' | sed 's/\[on\]/on/;s/\[off\]/off/')"
+  if [ -z "${status}" ]; then
+    echo "[${volume}]"
+  else
+    echo "[${volume} ${status}]"
+  fi
+}
+
+bar() {
+  echo "$(vol) $(conn) $(bat) $(dt)"
+}
+
+while true; do
+  xsetroot -name "$(bar)" > /dev/null 2>&1
+  sleep 10s
+done
+

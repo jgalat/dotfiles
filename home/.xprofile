@@ -1,0 +1,6 @@
+#!/bin/sh
+
+setxkbmap latam &
+set-background &
+dwmstatus &
+sxhkd &

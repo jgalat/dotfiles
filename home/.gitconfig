@@ -1,0 +1,10 @@
+[user]
+	name = Jorge Galat
+	email = jrgglt@gmail.com
+	signingkey = 3EFFFA4F225D1D39
+[core]
+	editor = vim
+[push]
+	default = simple
+[commit]
+	gpgsign = true
