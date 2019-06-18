@@ -16,7 +16,7 @@ bat() {
   elif [ "${capacity}" -lt 40 ]; then
     colorize="\x04"
   fi
-  printf "%s" "${colorize}[${status} ${capacity}% (${remaining})]\x01"
+  printf "${colorize}%s\x01" "[${status} ${capacity}% (${remaining})]"
 }
 
 conn() {
@@ -30,7 +30,7 @@ conn() {
   done
   iface_status="$(echo "${iface_status}" | sed "s/^[[:space:]]//")"
   colorize=$(ping -q -w1 -c1 8.8.8.8 > /dev/null 2>&1 && echo '\x03' || echo '\x05')
-  printf "%s" "${colorize}[${iface_status}]\x01"
+  printf "${colorize}%s\x01" "[${iface_status}]"
 }
 
 vol() {
