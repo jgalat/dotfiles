@@ -37,11 +37,7 @@ vol() {
   master="$(amixer -c 1 get Master)"
   volume="$(echo "${master}" | grep -o '[0-9]*%')"
   status="$(echo "${master}" | grep -o '\[on\]\|\[off\]' | sed 's/\[on\]/on/;s/\[off\]/off/')"
-  if [ -z "${status}" ]; then
-    echo "[${volume}]"
-  else
-    echo "[${volume} ${status}]"
-  fi
+  echo "[${volume} ${status}]"
 }
 
 bar() {

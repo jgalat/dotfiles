@@ -11,7 +11,7 @@ install_suckless() {
     cd "${suckless_item}"
     
     printf "Building %s..." "${suckless_item}"
-    if [ -z "$(make > /dev/null 2>&1)" ]; then
+    if make > /dev/null 2>&1; then
       echo "OK"
     else
       echo "FAILED"
@@ -19,7 +19,7 @@ install_suckless() {
     fi
 
     printf "Installing %s..." "${suckless_item}"
-    if [ -z "$(make install > /dev/null 2>&1)" ]; then
+    if make install > /dev/null 2>&1; then
       echo "OK"
     else
       echo "FAILED"
@@ -64,7 +64,7 @@ install() {
   if [ "$(id -u)" -ne 0 ]; then
     install_home
     echo "Super user is required to install suckless software."
-    if [ -z "$(command -v "sudo" > /dev/null 2>&1)" ]; then
+    if command -v "sudo" > /dev/null 2>&1; then
       sudo "${0}"
     fi
   else
