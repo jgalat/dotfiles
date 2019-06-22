@@ -43,7 +43,7 @@ vol() {
 }
 
 dwmstatus() {
-  xsetroot -name "$(vol) $(conn) $(bat) $(dt)" > /dev/null 2>&1
+  xsetroot -name " $(vol) $(conn) $(bat) $(dt)" > /dev/null 2>&1
 }
 
 while true; do
