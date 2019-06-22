@@ -1,5 +1,7 @@
 #!/bin/sh
 
+trap 'dwmstatus' TRAP
+
 dt() {
   printf "[%s]" "$(date +"%d/%m/%Y %H:%M")"
 }
@@ -40,12 +42,13 @@ vol() {
   echo "[${volume} ${status}]"
 }
 
-bar() {
-  echo "$(vol) $(conn) $(bat) $(dt)"
+dwmstatus() {
+  xsetroot -name "$(vol) $(conn) $(bat) $(dt)" > /dev/null 2>&1
 }
 
 while true; do
-  xsetroot -name " $(bar)" > /dev/null 2>&1
-  sleep 10s
+  dwmstatus 
+  sleep 10s &
+  wait
 done
 
