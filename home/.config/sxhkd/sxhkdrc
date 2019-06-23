@@ -1,7 +1,7 @@
 # Audio
 
 XF86AudioMute
-	amixer -c 1 sset Master toggle; updatestatus
+	amixer -D pulse set Master toggle; updatestatus
 
 XF86Audio{Raise,Lower}Volume
-	amixer -c 1 sset Master 5%{+,-}; updatestatus
+	amixer -D pulse set Master 5%{+,-}; updatestatus
