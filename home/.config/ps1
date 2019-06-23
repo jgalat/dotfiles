@@ -1,0 +1,54 @@
+#!/bin/bash
+
+default='\[\e[39m\]'
+red='\[\e[31m\]'
+yellow='\[\e[33m\]'
+
+default_alt='\x01\e[39m\x02'
+red_alt='\x01\e[31m\x02'
+yellow_alt='\x01\e[33m\x02'
+
+bold='\[\e[1m\]'
+normal='\[\e[0m\]'
+
+__check_git_repo() {
+  git rev-parse --git-dir --is-inside-git-dir --is-bare-repository > /dev/null 2>&1
+}
+
+__check_git_repo_nonempty() {
+  git rev-parse HEAD > /dev/null 2>&1
+}
+
+__git_current_branch() {
+  git symbolic-ref --short HEAD
+}
+
+__git_current_remote_track() {
+  git for-each-ref --format='%(upstream:short)' "$(git symbolic-ref -q HEAD)"
+}
+
+__git_current_remote_count() {
+  git status -sb | grep -o "\[.*\]"
+}
+
+__git_track() {
+  if __check_git_repo; then
+    remote="$(__git_current_remote_track)"
+    if [ -n "${remote}" ]; then
+      count="$(__git_current_remote_count)"
+      printf -- " tracking ${red_alt}${remote}${default_alt} ${count}"
+    fi
+  fi
+}
+
+__git_branch() {
+  if __check_git_repo; then
+    branch="$(__git_current_branch)"
+    if [ -n "${branch}" ]; then
+      printf -- "${yellow_alt}:${red_alt}${branch}${default_alt}"
+    fi
+  fi
+}
+
+PS1="${bold}${red}\w${default}\$(__git_track)${normal}\n${bold}\W\$(__git_branch)${default} \$ ${normal}"
+export PS1

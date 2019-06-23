@@ -5,3 +5,5 @@ export GPG_TTY
 
 # shellcheck disable=SC1090
 [ -f "$HOME/.config/aliasrc" ] && . ~/.config/aliasrc
+# shellcheck disable=SC1090
+[ -f "$HOME/.config/ps1" ] && . ~/.config/ps1
