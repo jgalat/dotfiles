@@ -2,7 +2,6 @@
 
 default='\[\e[39m\]'
 red='\[\e[31m\]'
-yellow='\[\e[33m\]'
 
 default_alt='\x01\e[39m\x02'
 red_alt='\x01\e[31m\x02'
@@ -36,7 +35,7 @@ __git_track() {
     remote="$(__git_current_remote_track)"
     if [ -n "${remote}" ]; then
       count="$(__git_current_remote_count)"
-      printf -- " tracking ${red_alt}${remote}${default_alt} ${count}"
+      printf -- " tracking ${red_alt}%s${default_alt} %s" "${remote}" "${count}"
     fi
   fi
 }
@@ -45,7 +44,7 @@ __git_branch() {
   if __check_git_repo; then
     branch="$(__git_current_branch)"
     if [ -n "${branch}" ]; then
-      printf -- "${yellow_alt}:${red_alt}${branch}${default_alt}"
+      printf -- "${yellow_alt}:${red_alt}%s${default_alt}" "${branch}"
     fi
   fi
 }
