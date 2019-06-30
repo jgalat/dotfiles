@@ -36,9 +36,9 @@ conn() {
 }
 
 vol() {
-  master="$(amixer -c 1 get Master)"
-  volume="$(echo "${master}" | grep -o '[0-9]*%')"
-  status="$(echo "${master}" | grep -o '\[on\]\|\[off\]' | sed 's/\[on\]/on/;s/\[off\]/off/')"
+  master="$(amixer -D pulse get Master)"
+  volume="$(echo "${master}" | grep -o '[0-9]*%' | head -n 1)"
+  status="$(echo "${master}" | grep -o '\[on\]\|\[off\]' | sed 's/\[on\]/on/;s/\[off\]/off/' | head -n 1)"
   echo "[${volume} ${status}]"
 }
 
