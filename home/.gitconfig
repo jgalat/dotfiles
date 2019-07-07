@@ -4,6 +4,7 @@
 	signingkey = 3EFFFA4F225D1D39
 [core]
 	editor = vim
+	excludesfile = /home/jgalat/.gitignore_global
 [push]
 	default = simple
 [commit]
