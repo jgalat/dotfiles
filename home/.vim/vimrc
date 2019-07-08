@@ -3,10 +3,11 @@ set nocompatible
 filetype plugin indent on
 syntax on
 
-runtime settings.vim
-runtime mappings.vim
 runtime colors.vim
+runtime mappings.vim
 runtime plugins.vim
+runtime settings.vim
 
-runtime pluginsettings/netrw.vim
 runtime pluginsettings/airline.vim
+runtime pluginsettings/netrw.vim
+runtime pluginsettings/prettier.vim
