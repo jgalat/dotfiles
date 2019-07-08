@@ -18,8 +18,5 @@ nmap <C-k> ]e
 vmap <C-j> [egv
 vmap <C-k> ]egv
 
-" Clear search with shift+enter
-nnoremap <S-CR> :noh<CR>
-
 " Linting
 nnoremap = :Prettier<CR>
