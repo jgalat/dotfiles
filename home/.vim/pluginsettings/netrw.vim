@@ -7,3 +7,7 @@ let g:netrw_list_hide=netrw_gitignore#Hide()
 let g:netrw_list_hide.=',\(^\|\s\s\)\zs\.\S\+'
 
 autocmd FileType netrw setl bufhidden=delete
+
+" Explore
+nmap - :Explore<CR>
+

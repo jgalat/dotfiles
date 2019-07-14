@@ -8,6 +8,7 @@ call plug#begin()
 Plug 'jiangmiao/auto-pairs'
 Plug 'mxw/vim-jsx', { 'for': 'javascript' }
 Plug 'pangloss/vim-javascript', { 'for': 'javascript' }
+Plug 'jparise/vim-graphql', { 'for': 'javascript' }
 Plug 'prettier/vim-prettier', { 'do': 'yarn install' }
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-fugitive'
@@ -15,5 +16,6 @@ Plug 'tpope/vim-sleuth'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
 Plug 'vim-airline/vim-airline'
-" Plug 'w0rp/ale'
+Plug 'neoclide/coc.nvim', { 'branch': 'release' }
+Plug 'chriskempson/base16-vim'
 call plug#end()
