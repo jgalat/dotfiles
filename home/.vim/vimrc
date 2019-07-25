@@ -10,6 +10,6 @@ runtime settings.vim
 
 runtime pluginsettings/airline.vim
 runtime pluginsettings/vim-uninpaired.vim
-runtime pluginsettings/netrw.vim
 runtime pluginsettings/prettier.vim
 runtime pluginsettings/coc.vim
+runtime pluginsettings/nerdtree.vim

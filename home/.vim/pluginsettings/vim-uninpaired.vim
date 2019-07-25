@@ -1,7 +1,7 @@
 " Move single lines
-nmap <C-j> [e
-nmap <C-k> ]e
+nmap <C-k> [e
+nmap <C-j> ]e
 
 " Move multiple lines selected
-vmap <C-j> [egv
-vmap <C-k> ]egv
+vmap <C-k> [egv
+vmap <C-j> ]egv
