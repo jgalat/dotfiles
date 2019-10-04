@@ -89,6 +89,8 @@ command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organize
 
 " Add status line support, for integration with other plugin, checkout `:h coc-status`
 set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+" Status line integration with airline
+let g:airline#extensions#coc#enabled = 1
 
 " Using CocList
 " Show all diagnostics
