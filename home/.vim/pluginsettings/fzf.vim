@@ -1,0 +1,1 @@
+nnoremap gb :Buffers<CR>
