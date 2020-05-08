@@ -9,5 +9,3 @@ export GPG_TTY
 [ -f "$HOME/.config/ps1" ] && . ~/.config/ps1
 # shellcheck disable=SC1090
 [ -f "$HOME/.fzf.bash" ] && . ~/.fzf.bash
-
-export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
