@@ -6,6 +6,7 @@ syntax on
 runtime plugins.vim
 runtime colors.vim
 runtime mappings.vim
+runtime statusline.vim
 runtime settings.vim
 
 runtime pluginsettings/coc.vim
