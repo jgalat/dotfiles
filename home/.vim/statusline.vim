@@ -1,12 +1,21 @@
 set laststatus=2
 
 " left hand side
-set statusline=[%{exists('g:loaded_fugitive')?fugitive#head():''}]
-set statusline+=\ [%t] " tail
-set statusline+=\ %m   " modified
-set statusline+=\ %r   " readonly?
-set statusline+=\ %h   " help file?
+" branch
+set statusline=[%{fugitive#head()}]
+" filename
+set statusline+=\ [%t]
+" modified?
+set statusline+=\ %m
+" readonly?
+set statusline+=\ %r
+" help?
+set statusline+=\ %h
+
 " right hand side
+" right align
 set statusline+=%="
-set statusline+=\ %y   " file type
-set statusline+=\ %p   " percentage
+" filetype
+set statusline+=\ %y
+" coc status
+set statusline+=\ [%{coc#status()}]
