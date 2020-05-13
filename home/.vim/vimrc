@@ -8,7 +8,6 @@ runtime colors.vim
 runtime mappings.vim
 runtime settings.vim
 
-runtime pluginsettings/airline.vim
 runtime pluginsettings/coc.vim
 runtime pluginsettings/fzf.vim
 runtime pluginsettings/nerdtree.vim

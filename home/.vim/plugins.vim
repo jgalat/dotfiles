@@ -19,8 +19,6 @@ Plug 'tpope/vim-sleuth'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
 Plug 'neoclide/coc.nvim', { 'branch': 'release' }
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
 Plug 'scrooloose/nerdtree'
-Plug 'chriskempson/base16-vim'
+Plug 'reedes/vim-colors-pencil'
 call plug#end()
