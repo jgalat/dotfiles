@@ -11,7 +11,7 @@ set number
 set relativenumber
 set ruler
 set shiftwidth=2
-set showbreak=+++
+set nowrap
 set showmatch
 set smartcase
 set smartindent

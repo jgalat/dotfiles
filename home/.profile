@@ -1,5 +1,6 @@
 #!/bin/sh
 
+PATH="$HOME/.cargo/bin:$PATH"
 PATH="$PATH:$(du "$HOME/.local/bin/" | cut -f2 | tr '\n' ':' | sed 's/:*$//')"
 export PATH
 EDITOR="/usr/bin/vim"
@@ -8,3 +9,4 @@ BROWSER="/usr/bin/firefox-bin"
 export BROWSER
 
 [ "$(tty)" = "/dev/tty1" ] && exec startx
+

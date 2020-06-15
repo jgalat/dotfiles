@@ -13,4 +13,6 @@ runtime pluginsettings/coc.vim
 runtime pluginsettings/fzf.vim
 runtime pluginsettings/nerdtree.vim
 runtime pluginsettings/prettier.vim
+runtime pluginsettings/rust.vim
 runtime pluginsettings/vim-uninpaired.vim
+

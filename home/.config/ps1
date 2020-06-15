@@ -6,6 +6,7 @@ red='\[\e[31m\]'
 default_alt='\x01\e[39m\x02'
 red_alt='\x01\e[31m\x02'
 yellow_alt='\x01\e[33m\x02'
+blue_alt='\x01\e[34m\x02'
 
 bold='\[\e[1m\]'
 normal='\[\e[0m\]'
@@ -40,6 +41,16 @@ __git_track() {
   fi
 }
 
+__git_changes() {
+  if __check_git_repo; then
+    changes="$(git status -s)"
+    if [ -n "${changes}" ]; then
+      # shellcheck disable=SC2059
+      printf -- "${blue_alt}?"
+    fi
+  fi
+}
+
 __git_branch() {
   if __check_git_repo; then
     branch="$(__git_current_branch)"
@@ -49,5 +60,6 @@ __git_branch() {
   fi
 }
 
-PS1="${bold}${red}\w${default}\$(__git_track)${normal}\n${bold}\W\$(__git_branch)${default} \$ ${normal}"
+
+PS1="${bold}${red}\w${default}\$(__git_track)${normal}\n${bold}\W\$(__git_branch)\$(__git_changes)${default} \$ ${normal}"
 export PS1
