@@ -25,4 +25,5 @@ Plug 'neoclide/coc.nvim', { 'branch': 'release' }
 Plug 'scrooloose/nerdtree'
 Plug 'reedes/vim-colors-pencil'
 Plug 'rust-lang/rust.vim'
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 call plug#end()
