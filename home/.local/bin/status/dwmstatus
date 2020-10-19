@@ -22,7 +22,7 @@ bat() {
 }
 
 conn() {
-  ifaces="enp2s0 wlp1s0"
+  ifaces="enp0s31f6 wlp0s20f3"
   iface_status=""
   for iface in $ifaces; do
     status="$(cat /sys/class/net/"${iface}"/operstate)"
