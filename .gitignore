@@ -54,3 +54,8 @@ dkms.conf
 # Home backup
 home.b/*
 !home.b/.gitkeep
+
+# Suckless binaries
+suckless/dmenu/dmenu
+suckless/dwm/dwm
+suckless/st/st
