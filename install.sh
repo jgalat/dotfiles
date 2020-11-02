@@ -47,7 +47,7 @@ install_home() {
     elif [ -f "${file}" ]; then
       if [ -f "${HOME}/${file}" ]; then
         cd "${HOME}"
-        cp --parents "${file}" "${REPOSITORY}/home.b"
+        cp --parents "${file}" "${REPOSITORY}/backup-home"
         rm -r "${HOME:?}/${file:?}"
         cd "${REPOSITORY}/home"
       fi

@@ -52,8 +52,8 @@ Mkfile.old
 dkms.conf
 
 # Home backup
-home.b/*
-!home.b/.gitkeep
+backup-home/*
+!backup-home/.gitkeep
 
 # Suckless binaries
 suckless/dmenu/dmenu
