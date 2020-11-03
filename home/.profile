@@ -1,7 +1,7 @@
 #!/bin/sh
 
 PATH="$HOME/.cargo/bin:$PATH"
-PATH="$PATH:$(du "$HOME/.local/bin/" | cut -f2 | tr '\n' ':' | sed 's/:*$//')"
+PATH="$(du "$HOME/.local/bin/" | cut -f2 | tr '\n' ':' | sed 's/:*$//'):$PATH"
 export PATH
 EDITOR="/usr/bin/vim"
 export EDITOR

@@ -1,6 +1,4 @@
 #!/bin/sh
 
-alias poweroff="sudo poweroff"\
-      reboot="sudo reboot"\
-      emacs="emacs -nw"
+alias emacs="emacs -nw"
 
