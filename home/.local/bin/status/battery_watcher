@@ -1,0 +1,17 @@
+#!/bin/sh
+
+notify_low_bat() {
+  notify-send --urgency=critical "Battery" "Low battery!"
+}
+
+check_bat_capacity() {
+  capacity="$(acpi -b | awk '{print $4}' | tr -dc '0-9')"
+  if [ "${capacity}" -lt 10 ]; then
+    notify_low_bat
+  fi
+}
+
+while true; do
+  check_bat_capacity
+  sleep 10m
+done

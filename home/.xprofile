@@ -3,4 +3,5 @@
 setxkbmap us &
 set-background &
 dwmstatus &
+battery_watcher &
 sxhkd &
