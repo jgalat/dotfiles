@@ -3,7 +3,7 @@
 trap 'dwmstatus' TRAP
 
 dt() {
-  printf "%s" "$(date +"%d/%m/%Y %H:%M")"
+  echo "$(date +"%d/%m/%Y %H:%M")"
 }
 
 bat() {
@@ -23,6 +23,9 @@ conn() {
       iface_status="${iface_status} ${iface}: ${status}"
     fi
   done
+  if [ -z "${iface_status}" ]; then
+    iface_status="down"
+  fi
   iface_status="$(echo "${iface_status}" | sed "s/^[[:space:]]//")"
   echo "${iface_status}"
 }
@@ -34,8 +37,12 @@ vol() {
   echo "${volume} ${status}"
 }
 
+bright(){
+  echo "$(xbacklight -get)"
+}
+
 dwmstatus() {
-  xsetroot -name "$(vol) | $(conn) | $(bat) | $(dt)" > /dev/null 2>&1
+  xsetroot -name " $(bright) | $(vol) | $(conn) | $(bat) | $(dt)" > /dev/null 2>&1
 }
 
 while true; do

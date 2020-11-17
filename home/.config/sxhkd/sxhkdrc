@@ -7,4 +7,4 @@ XF86Audio{Raise,Lower}Volume
 	amixer -D pulse set Master 5%{+,-}; updatestatus
 
 XF86MonBrightness{Up,Down}
-	xbacklight -{inc,dec} 5
+	xbacklight -{inc,dec} 5; updatestatus
