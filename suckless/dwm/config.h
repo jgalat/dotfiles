@@ -10,18 +10,11 @@ static const char dmenufont[]       = "Liberation Mono:size=12";
 static const char col_gray1[]       = "#888888";
 static const char col_gray2[]       = "#222222";
 static const char col_black[]       = "#000000";
-static const char col_green[]       = "#00ff00";
-static const char col_red[]         = "#ff0000";
-static const char col_yellow[]      = "#ffff00";
 static const char col_white[]       = "#ffffff";
-
 static const char *colors[][3]      = {
-	/*                 fg         bg           border     */
-	[SchemeNorm]   = { col_gray1, col_black,   col_gray2   },
-	[SchemeSel]    = { col_white, col_black,   col_white   },
-	[SchemeOK]     = { col_black, col_green,   col_green   },
-	[SchemeWarn]   = { col_black, col_yellow,  col_yellow  },
-	[SchemeUrgent] = { col_white, col_red,     col_red     },
+	/*                 fg         bg         border   */
+	[SchemeNorm]   = { col_gray1, col_black, col_gray2   },
+	[SchemeSel]    = { col_white, col_black, col_white   },
 };
 
 /* tagging */
@@ -30,7 +23,7 @@ static const char *tags[] = { "a", "b", "c", "d", "e", "f", "g", "h", "i" };
 static const Rule rules[] = {
 	/* xprop(1):
 	 *	WM_CLASS(STRING) = instance, class
-	 *	WM_NAME(STRING)  = title
+	 *	WM_NAME(STRING) = title
 	 */
 	/* class      instance    title       tags mask     isfloating   monitor */
 	{ "Firefox",  NULL,       NULL,       1 << 2,       0,           -1 },

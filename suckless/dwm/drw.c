@@ -393,16 +393,7 @@ drw_fontset_getwidth(Drw *drw, const char *text)
 {
 	if (!drw || !drw->fonts || !text)
 		return 0;
-	
-	int i, control_chars = 0;
-	unsigned int control_char_w = 0;
-	drw_font_getexts(drw->fonts, "\x01", 1, &control_char_w, NULL);
-	for (i = 0; i < strlen(text); i++) {
-		if (text[i] > '\x00' && text[i] < '\x20')
-			control_chars += control_char_w;
-	}
-
-	return drw_text(drw, 0, 0, 0, 0, 0, text, 0) - control_chars;
+	return drw_text(drw, 0, 0, 0, 0, 0, text, 0);
 }
 
 void
