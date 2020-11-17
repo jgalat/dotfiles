@@ -3,7 +3,7 @@
 trap 'dwmstatus' TRAP
 
 dt() {
-  echo "$(date +"%d/%m/%Y %H:%M")"
+  date +"%d/%m/%Y %H:%M"
 }
 
 bat() {
@@ -38,7 +38,7 @@ vol() {
 }
 
 bright(){
-  echo "$(xbacklight -get)"
+  xbacklight -get
 }
 
 dwmstatus() {
