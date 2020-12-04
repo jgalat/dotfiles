@@ -1,6 +1,6 @@
 #!/bin/sh
 
-setxkbmap us &
+setxkbmap -layout us -variant altgr-intl &
 set-background &
 dwmstatus &
 battery_watcher &
