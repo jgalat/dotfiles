@@ -13,5 +13,5 @@ check_bat_capacity() {
 
 while true; do
   check_bat_capacity
-  sleep 10m
+  sleep 5m
 done
