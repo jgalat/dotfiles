@@ -47,7 +47,7 @@ dwmstatus() {
 
 while true; do
   dwmstatus 
-  sleep 10s &
+  sleep 30s &
   wait
 done
 
