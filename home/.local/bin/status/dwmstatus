@@ -15,12 +15,16 @@ bat() {
 }
 
 conn() {
-  ifaces="enp0s31f6 wlp0s20f3"
+  ifaces="$(find /sys/class/net -type l -not -lname '*virtual*' -printf '%f\n')"
   iface_status=""
   for iface in $ifaces; do
     status="$(cat /sys/class/net/"${iface}"/operstate)"
     if [ "${status}" = "up" ]; then
-      iface_status="${iface_status} ${iface}: ${status}"
+      wifi_network=""
+      if [ "${iface:0:1}" = "w" ]; then
+        wifi_network=" ($(wpa_cli status | grep '^ssid=' | sed 's/^ssid=//'))"
+      fi
+      iface_status="${iface_status} ${iface}: ${status}${wifi_network}"
     fi
   done
   if [ -z "${iface_status}" ]; then

@@ -8,3 +8,9 @@ XF86Audio{Raise,Lower}Volume
 
 XF86MonBrightness{Up,Down}
 	xbacklight -{inc,dec} 5; updatestatus
+
+ctrl + shift + 3
+	flameshot gui
+
+ctrl + shift + 4
+	flameshot screen --clipboard
