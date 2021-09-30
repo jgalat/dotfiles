@@ -1,0 +1,13 @@
+on:
+  push:
+    branch:
+      - master
+
+jobs:
+  shellcheck:
+    name: Shellcheck
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run ShellCheck
+      run: ./test.sh
