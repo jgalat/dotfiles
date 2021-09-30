@@ -6,6 +6,7 @@ set hlsearch
 set ignorecase
 set incsearch
 set linebreak
+set mouse=a
 set noswapfile
 set number
 set relativenumber
