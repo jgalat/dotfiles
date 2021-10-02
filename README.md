@@ -1,4 +1,4 @@
-# dotfiles ![example workflow](https://github.com/jgalat/dotfiles/actions/workflows/shellcheck.yml/badge.svg)
+# dotfiles [![.github/workflows/shellcheck.yml](https://github.com/jgalat/dotfiles/actions/workflows/shellcheck.yml/badge.svg)](https://github.com/jgalat/dotfiles/actions/workflows/shellcheck.yml)
 
 My dotfiles including patched versions of `dmenu`, `dwm` and `st`.
 
