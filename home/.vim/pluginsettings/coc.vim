@@ -91,3 +91,9 @@ nnoremap <silent> <leader>o  :<C-u>CocList outline<cr>
 nnoremap <silent> <leader>j  :<C-u>CocNext<CR>
 " Do default action for previous item.
 nnoremap <silent> <leader>k  :<C-u>CocPrev<CR>
+
+let g:coc_global_extensions = [
+      \ 'coc-tsserver',
+      \ 'coc-rls',
+      \ 'coc-go'
+      \ ]
