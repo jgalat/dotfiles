@@ -12,3 +12,7 @@ export HISTFILESIZE=10000
 [ -f "$HOME/.config/ps1" ] && . ~/.config/ps1
 # shellcheck disable=SC1090
 [ -f "$HOME/.fzf.bash" ] && . ~/.fzf.bash
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
