@@ -10,3 +10,4 @@ export BROWSER="/usr/bin/firefox-bin"
 
 [ "$(tty)" = "/dev/tty1" ] && exec startx
 
+. "$HOME/.cargo/env"

@@ -42,7 +42,7 @@ vol() {
 }
 
 bright(){
-  xbacklight -get
+  light -G | cut -c -2
 }
 
 dwmstatus() {
