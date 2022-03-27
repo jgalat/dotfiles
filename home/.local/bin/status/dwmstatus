@@ -42,7 +42,7 @@ vol() {
 }
 
 bright(){
-  light -G | cut -c -2
+  light -G | sed 's/\.00$//'
 }
 
 dwmstatus() {
