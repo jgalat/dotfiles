@@ -20,4 +20,8 @@ export NVM_DIR="$HOME/.nvm"
 # shellcheck source=/dev/null
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 # shellcheck source=/dev/null
-[ -s "$HOME/.cargo/env" ] && . ~/.cargo/env
+[ -s "$HOME/.cargo/env" ] && \. ~/.cargo/env
+# shellcheck source=/dev/null
+[ -s "$HOME/.ghcup/env" ] && \. "$HOME/.ghcup/env"
+
+export ANDROID_HOME="$HOME/Android/Sdk"
