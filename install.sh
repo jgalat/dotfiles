@@ -3,6 +3,14 @@
 REPOSITORY="$(dirname "$(realpath "${0}")")"
 
 install_suckless() {
+  if [ "$(id -u)" -ne 0 ]; then
+    echo "Super user is required to install suckless software."
+    if command -v "sudo" > /dev/null 2>&1; then
+      sudo "${0}" suckless
+      exit 0
+    fi
+  fi
+
   echo "Installing suckless software..."
 
   cd "${REPOSITORY}/suckless"
@@ -60,18 +68,21 @@ install_home() {
   cd "${REPOSITORY}"
 }
 
-install() {
-  if [ "$(id -u)" -ne 0 ]; then
-    install_home
-    echo "Super user is required to install suckless software."
-    if command -v "sudo" > /dev/null 2>&1; then
-      sudo "${0}"
-    fi
-  else
-    install_suckless
-  fi
+usage() {
+  echo "$0 home|suckless"
+  exit 0
 }
 
 set -e
 
-install 
+case $1 in
+"home")
+  install_home
+  ;;
+
+"suckless")
+  install_suckless
+  ;;
+*)
+  usage
+esac
