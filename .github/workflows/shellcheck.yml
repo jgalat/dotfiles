@@ -1,6 +1,9 @@
 on:
+  pull_request:
+    branches:
+      - master
   push:
-    branch:
+    branches:
       - master
 
 jobs:
