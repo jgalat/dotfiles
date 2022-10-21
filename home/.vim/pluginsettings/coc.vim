@@ -101,5 +101,10 @@ nnoremap <silent> <leader>k  :<C-u>CocPrev<CR>
 let g:coc_global_extensions = [
       \ 'coc-tsserver',
       \ 'coc-rls',
-      \ 'coc-go'
+      \ 'coc-go',
+      \ 'coc-html',
+      \ 'coc-css',
+      \ 'coc-json',
+      \ 'coc-yaml',
+      \ 'coc-docker'
       \ ]
