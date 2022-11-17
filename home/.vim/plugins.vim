@@ -13,7 +13,6 @@ Plug 'pangloss/vim-javascript'
 Plug 'leafgarland/typescript-vim' 
 Plug 'jparise/vim-graphql'
 Plug 'prettier/vim-prettier', { 'do': 'npm install --frozen-lockfile --production' }
-Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rhubarb'
