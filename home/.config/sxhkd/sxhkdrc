@@ -1,5 +1,3 @@
-# Audio
-
 XF86AudioMute
 	amixer -D pulse set Master toggle; updatestatus
 
