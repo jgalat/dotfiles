@@ -8,15 +8,36 @@ AIRPODS_SINK="bluez_sink.$ID"
 AIRPODS_SOURCE="bluez_source.$ID"
 
 print_usage() {
-  echo "Usage: airpods <hi|lo|off>"
-  exit 1
+  echo "Usage: airpods <info|hi|lo|off>"
 }
+
 
 if [ -z "$1" ]; then
   print_usage
+  exit 1
 fi
 
 connected="$(bluetoothctl info ${AIRPODS_MAC} | grep 'Connected: yes')"
+
+if [ "$1" = "info" ]; then 
+  active_sink="$(pactl info | grep 'Default Sink')"
+  case "$active_sink" in
+    *"bluez_sink"*)
+      case "$active_sink" in
+        *"a2dp_sink"*)
+          echo "hi"
+          ;;
+        *"handsfree_head_unit"*)
+          echo "lo"
+          ;;
+      esac
+      ;;
+    *)
+      echo "off"
+      ;;
+  esac
+  exit 0
+fi
 
 if [ -z "$connected" ] && [ "$1" != "off" ]; then
   echo "AirPods Pro not connected"
@@ -36,6 +57,10 @@ case "$1" in
     updatestatus
     echo "AirPods Pro profile set to off"
     exit 0
+    ;;
+  *)
+    print_usage
+    exit 1
     ;;
 esac
 

@@ -53,20 +53,10 @@ vol() {
   volume="$(echo "$master" | grep -o '[0-9]*%' | head -n 1)"
   status="$(echo "$master" | grep -o '\[on\]\|\[off\]' | sed 's/\[on\]/on/;s/\[off\]/off/' | head -n 1)"
 
-  active_sink="$(pactl info | grep 'Default Sink')"
-
-  case "$active_sink" in
-    *"bluez_sink"*)
-      case "$active_sink" in
-        *"a2dp_sink"*)
-          profile=" (bt hi)"
-          ;;
-        *"handsfree_head_unit"*)
-          profile=" (bt lo)"
-          ;;
-      esac
-      ;;
-  esac
+  pods="$(airpods info)"
+  if [ "$pods" != 'off' ];then
+    profile=" (bt $pods)"
+  fi
 
   echo "$volume $status$profile"
 }
