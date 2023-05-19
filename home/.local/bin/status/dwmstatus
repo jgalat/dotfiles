@@ -7,29 +7,43 @@ dt() {
 }
 
 bat() {
-  acpi="$(acpi -b)"
-  status="$(echo "$acpi" | awk '{print substr($3,1,length($3)-1)}')"
-  capacity="$(echo "$acpi" | awk '{print $4}' | tr -dc '0-9')"
-  remaining="$(echo "$acpi" | awk '{print substr($5,1,5)}')"
-  echo "$status $capacity% ($remaining)"
+  battery="$(acpi -b)"
+  capacity="$(echo "$battery" | grep -o -P '\d+%')"
+  remaining="$(echo "$battery" | grep -o -P '\d\d:\d\d')"
+
+  ac="$(acpi -a | grep -o -P 'on|off')"
+  status="-"
+  if [ "$ac" = "on" ]; then
+    status="+"
+  fi
+
+  ret="$status$capacity"
+  if [ -n "$remaining" ]; then
+    ret="${ret} (${remaining})"
+  fi
+
+  echo "$ret"
 }
 
 conn() {
   ifaces="$(find /sys/class/net -type l -not -lname '*virtual*' -printf '%f\n')"
-  iface_status=""
   for iface in $ifaces; do
     status="$(cat /sys/class/net/"${iface}"/operstate)"
     if [ "$status" = "up" ]; then
-      wifi_network=""
+      append=""
       if [ "$(echo "$iface" | cut -c1-1)" = "w" ]; then
-        wifi_network=" ($(wpa_cli status | grep '^ssid=' | sed 's/^ssid=//'))"
+        append="<$(wpa_cli status | grep '^ssid=' | sed 's/^ssid=//')>"
+      else
+        append="[--]"
       fi
-      iface_status="$iface_status $iface: ${status}${wifi_network}"
+      iface_status="$iface_status ${append}"
     fi
   done
+
   if [ -z "$iface_status" ]; then
-    iface_status="down"
+    iface_status="--/--"
   fi
+
   iface_status="$(echo "$iface_status" | sed "s/^[[:space:]]//")"
   echo "$iface_status"
 }
@@ -38,7 +52,23 @@ vol() {
   master="$(amixer -D pulse get Master)"
   volume="$(echo "$master" | grep -o '[0-9]*%' | head -n 1)"
   status="$(echo "$master" | grep -o '\[on\]\|\[off\]' | sed 's/\[on\]/on/;s/\[off\]/off/' | head -n 1)"
-  echo "$volume $status"
+
+  active_sink="$(pactl info | grep 'Default Sink')"
+
+  case "$active_sink" in
+    *"bluez_sink"*)
+      case "$active_sink" in
+        *"a2dp_sink"*)
+          profile=" (bt hi)"
+          ;;
+        *"handsfree_head_unit"*)
+          profile=" (bt lo)"
+          ;;
+      esac
+      ;;
+  esac
+
+  echo "$volume $status$profile"
 }
 
 bright(){
