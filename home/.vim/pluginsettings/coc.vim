@@ -101,7 +101,7 @@ nnoremap <silent> <leader>k  :<C-u>CocPrev<CR>
 let g:coc_global_extensions = [
       \ 'coc-tsserver',
       \ 'coc-eslint',
-      \ 'coc-rls',
+      \ 'coc-rust-analyzer',
       \ 'coc-go',
       \ 'coc-html',
       \ 'coc-css',
