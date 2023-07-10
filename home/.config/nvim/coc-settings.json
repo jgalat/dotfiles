@@ -14,5 +14,6 @@
       "filetypes": ["haskell", "lhaskell"]
     }
   },
-  "workspace.ignoredFolders": ["$HOME", "$HOME/.cargo/**", "$HOME/.rustup/**"]
+  "workspace.ignoredFolders": ["$HOME", "$HOME/.cargo/**", "$HOME/.rustup/**"],
+  "tsserver.useLocalTsdk": true
 }
