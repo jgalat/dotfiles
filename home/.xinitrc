@@ -7,4 +7,4 @@ done
 #shellcheck disable=SC1090
 [ -f "$HOME/.xprofile" ] && . ~/.xprofile
 
-exec dwm
+exec dbus-run-session dwm

@@ -3,7 +3,7 @@
 	email = jrgglt@gmail.com
 	signingkey = 3EFFFA4F225D1D39
 [core]
-	editor = vim
+	editor = nvim
 	excludesfile = /home/jgalat/.gitignore_global
 [push]
 	default = simple

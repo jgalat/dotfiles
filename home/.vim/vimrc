@@ -15,4 +15,5 @@ runtime pluginsettings/nerdtree.vim
 runtime pluginsettings/prettier.vim
 runtime pluginsettings/rust.vim
 runtime pluginsettings/vim-uninpaired.vim
+runtime pluginsettings/vim-commentary.vim
 

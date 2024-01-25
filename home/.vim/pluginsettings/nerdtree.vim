@@ -9,5 +9,5 @@ let NERDTreeDirArrows = 1
 let g:NERDTreeDirArrowExpandable = '+'
 let g:NERDTreeDirArrowCollapsible = '~'
 
-let g:NERDTreeIgnore = ["^.git$", "^node_modules$","^.stack-work$"]
+let g:NERDTreeIgnore = ["^.git$", "^node_modules$", "^.stack-work$", "^target$"]
 let NERDTreeShowHidden = 1

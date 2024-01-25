@@ -15,6 +15,8 @@ PATH="$FLYCTL_INSTALL/bin:$PATH"
 PATH="/home/jgalat/.foundry/bin:$PATH"
 # shellcheck source=/dev/null
 PATH="$(du "$HOME/.local/bin/" | cut -f2 | tr '\n' ':' | sed 's/:*$//'):$PATH"
+# shellcheck source=/dev/null
+PATH="$(du "$HOME/google/google-cloud-sdk/bin/" | cut -f2 | tr '\n' ':' | sed 's/:*$//'):$PATH"
 export PATH
 
 export EDITOR="/usr/bin/nvim"
