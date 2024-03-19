@@ -65,13 +65,8 @@ bright(){
   light -G | sed 's/\.00$//'
 }
 
-exa(){
-  price="$(curl -X 'GET' 'https://api.coingecko.com/api/v3/coins/exa?tickers=true&market_data=false&community_data=false&developer_data=false&sparkline=false'   -H 'accept: application/json' -s | jq '.tickers[0].converted_last.usd')"
-  echo "EXA \$$price"
-}
-
 dwmstatus() {
-  xsetroot -name "$(exa) | $(bright) | $(vol) | $(conn) | $(bat) | $(dt)" > /dev/null 2>&1
+  xsetroot -name "$(bright) | $(vol) | $(conn) | $(bat) | $(dt)" > /dev/null 2>&1
 }
 
 while true; do
