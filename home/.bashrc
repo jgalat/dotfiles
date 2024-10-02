@@ -3,8 +3,8 @@
 GPG_TTY="$(tty)"
 export GPG_TTY
 
-export HISTSIZE=10000
-export HISTFILESIZE=10000
+export HISTSIZE=1000000
+export HISTFILESIZE=1000000
 
 # shellcheck source=home/.config/aliasrc
 [ -f "$HOME/.config/aliasrc" ] && . ~/.config/aliasrc
@@ -23,3 +23,6 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$HOME/.cargo/env" ] && \. ~/.cargo/env
 # shellcheck source=/dev/null
 [ -s "$HOME/.ghcup/env" ] && \. "$HOME/.ghcup/env"
+
+# eval "$(pyenv virtualenv-init -)"
+eval "$(pyenv init -)"

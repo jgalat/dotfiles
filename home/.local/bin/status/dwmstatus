@@ -44,6 +44,11 @@ conn() {
     iface_status="--/--"
   fi
 
+  vpn="$(sudo wg show interfaces)"
+  if [ -n "$vpn"  ]; then
+    iface_status="${iface_status} (${vpn})"
+  fi
+
   iface_status="$(echo "$iface_status" | sed "s/^[[:space:]]//")"
   echo "$iface_status"
 }
@@ -61,7 +66,7 @@ vol() {
   echo "$volume $status$profile"
 }
 
-bright(){
+bright() {
   light -G | sed 's/\.00$//'
 }
 
