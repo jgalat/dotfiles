@@ -7,7 +7,7 @@ dt() {
 }
 
 bat() {
-  battery="$(acpi -b)"
+  battery="$(acpi -b | head -n 1)"
   capacity="$(echo "$battery" | grep -o -P '\d+%')"
   remaining="$(echo "$battery" | grep -o -P '\d\d:\d\d')"
 

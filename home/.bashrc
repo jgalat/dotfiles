@@ -26,3 +26,5 @@ export NVM_DIR="$HOME/.nvm"
 
 # eval "$(pyenv virtualenv-init -)"
 eval "$(pyenv init -)"
+
+export PATH="$PATH:/home/jgalat/.ityfuzz/bin"

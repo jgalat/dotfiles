@@ -5,7 +5,7 @@ notify_low_bat() {
 }
 
 check_bat_capacity() {
-  capacity="$(acpi -b | awk '{print $4}' | tr -dc '0-9')"
+  capacity="$(acpi -b | head -n 1 | awk '{print $4}' | tr -dc '0-9')"
   if [ "${capacity}" -lt 10 ]; then
     notify_low_bat
   fi

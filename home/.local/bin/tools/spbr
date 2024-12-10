@@ -1,0 +1,5 @@
+#!/bin/sh
+
+sudo wg-quick $1 sp
+
+updatestatus
