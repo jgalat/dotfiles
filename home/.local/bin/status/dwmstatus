@@ -1,7 +1,5 @@
 #!/bin/sh
 
-trap 'dwmstatus' TRAP
-
 dt() {
   date +"%d/%m/%Y %H:%M"
 }
@@ -76,7 +74,6 @@ dwmstatus() {
 
 while true; do
   dwmstatus 
-  sleep 30s &
+  sleep 10s &
   wait
 done
-

@@ -1,5 +1,0 @@
-#!/bin/sh
-
-sudo wg-quick $1 rosario
-
-updatestatus

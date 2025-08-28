@@ -15,7 +15,7 @@ Plug 'leafgarland/typescript-vim'
 Plug 'mxw/vim-jsx'
 Plug 'neoclide/coc.nvim', { 'branch': 'release' }
 Plug 'pangloss/vim-javascript'
-Plug 'prettier/vim-prettier', { 'do': 'npm install --frozen-lockfile --production' }
+Plug 'prettier/vim-prettier', { 'do': 'yarn install --frozen-lockfile --production && yarn add prettier-plugin-solidity' }
 Plug 'reedes/vim-colors-pencil'
 Plug 'rust-lang/rust.vim'
 Plug 'scrooloose/nerdtree'

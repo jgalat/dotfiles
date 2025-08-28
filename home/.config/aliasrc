@@ -2,4 +2,3 @@
 
 alias emacs="emacs -nw"
 alias vim="nvim"
-

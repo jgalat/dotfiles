@@ -14,7 +14,7 @@ set ruler
 set shiftwidth=2
 set nowrap
 set showmatch
-set smartcase
+set ignorecase
 set smartindent
 set smarttab
 set softtabstop=2

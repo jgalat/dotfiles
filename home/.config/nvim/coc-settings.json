@@ -15,5 +15,7 @@
     }
   },
   "workspace.ignoredFolders": ["$HOME", "$HOME/.cargo/**", "$HOME/.rustup/**"],
-  "tsserver.useLocalTsdk": true
+  "tsserver.useLocalTsdk": true,
+
+  "rust-analyzer.inlayHints.typeHints.enable": false
 }

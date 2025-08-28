@@ -1,4 +1,6 @@
 " Lint on save
+let g:prettier#exec_cmd_path = '~/.vim/plugged/vim-prettier/node_modules/.bin/prettier'
+
 let g:prettier#autoformat = 0
 let g:prettier#autoformat_config_presen = 1
 

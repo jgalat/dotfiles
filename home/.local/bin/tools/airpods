@@ -59,6 +59,14 @@ case "$1" in
     echo "AirPods Pro profile set to off"
     exit 0
     ;;
+  "re" | "restart")
+    bluetoothctl disconnect "$AIRPODS_MAC"
+    sleep 2
+    bluetoothctl connect "$AIRPODS_MAC"
+    sleep 4
+    "$0" hi
+    exit 0
+    ;;
   *)
     print_usage
     exit 1
