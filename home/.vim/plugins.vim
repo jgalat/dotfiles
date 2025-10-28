@@ -25,4 +25,5 @@ Plug 'tpope/vim-rhubarb'
 Plug 'tpope/vim-sleuth'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
+Plug 'jgalat/vim-apescript'
 call plug#end()

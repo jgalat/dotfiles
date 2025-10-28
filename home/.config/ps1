@@ -28,7 +28,13 @@ __git_current_remote_track() {
 }
 
 __git_current_remote_count() {
-  git status -sb | grep -o "\[.*\]"
+  if git rev-parse --abbrev-ref @{upstream} >/dev/null 2>&1; then
+    read -r behind ahead < <(git rev-list --left-right --count @{upstream}...HEAD 2>/dev/null | awk '{print $1, $2}')
+    out=""
+    [ "${ahead:-0}"  -gt 0 ]  && out="${out}ahead ${ahead}"
+    [ "${behind:-0}" -gt 0 ]  && out="${out}${out:+, }behind ${behind}"
+    [ -n "$out" ] && printf '[%s]' "$out"
+  fi
 }
 
 __git_track() {
