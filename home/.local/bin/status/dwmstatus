@@ -52,16 +52,14 @@ conn() {
 }
 
 vol() {
-  master="$(amixer -D pulse get Master)"
-  volume="$(echo "$master" | grep -o '[0-9]*%' | head -n 1)"
-  status="$(echo "$master" | grep -o '\[on\]\|\[off\]' | sed 's/\[on\]/on/;s/\[off\]/off/' | head -n 1)"
+  volume="$(wpctl get-volume @DEFAULT_AUDIO_SINK@ | awk '/MUTED/ {print 0; exit} {printf "%.0f\n", $2 * 100}')"
 
   pods="$(airpods info)"
   if [ "$pods" != 'off' ];then
     profile=" (bt $pods)"
   fi
 
-  echo "$volume $status$profile"
+  echo "$volume$profile"
 }
 
 bright() {
@@ -72,8 +70,11 @@ dwmstatus() {
   xsetroot -name "$(bright) | $(vol) | $(conn) | $(bat) | $(dt)" > /dev/null 2>&1
 }
 
-while true; do
-  dwmstatus 
-  sleep 10s &
-  wait
-done
+if [ "$1" = "--daemon" ]; then
+  while true; do
+    dwmstatus
+    sleep 10
+  done
+else
+  dwmstatus
+fi

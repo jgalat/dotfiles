@@ -1,9 +1,10 @@
 #!/bin/sh
 
+gentoo-pipewire-launcher &
 light -I &
 setxkbmap -layout us -variant altgr-intl &
 set-background &
-dwmstatus &
+dwmstatus --daemon &
 battery_watcher &
 sxhkd &
 # xcompmgr -c -l0 -t0 -r0 -o.00 &

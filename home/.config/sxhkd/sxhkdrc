@@ -1,11 +1,14 @@
 XF86AudioMute
-	amixer -D pulse set Master toggle
+    wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle && dwmstatus
 
-XF86Audio{Raise,Lower}Volume
-	amixer -D pulse set Master 5%{+,-}
+XF86AudioRaiseVolume
+    wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+ && dwmstatus
+
+XF86AudioLowerVolume
+    wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%- && dwmstatus
 
 XF86MonBrightness{Up,Down}
-	light -{A,U} 5
+	light -{A,U} 5 && dwmstatus
 
 ctrl + shift + 3
 	flameshot gui
