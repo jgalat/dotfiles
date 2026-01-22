@@ -66,15 +66,37 @@ bright() {
   light -G | sed 's/\.00$//'
 }
 
-dwmstatus() {
-  xsetroot -name "$(bright) | $(vol) | $(conn) | $(bat) | $(dt)" > /dev/null 2>&1
+cpu() {
+  read -r _ a b c d rest < /proc/stat
+  total=$((a + b + c + d))
+  idle=$d
+  sleep 0.2
+  read -r _ a b c d rest < /proc/stat
+  total2=$((a + b + c + d))
+  idle2=$d
+  echo "$((100 * ((total2 - total) - (idle2 - idle)) / (total2 - total)))"
 }
 
-if [ "$1" = "--daemon" ]; then
-  while true; do
+temp() {
+  sensors -u thinkpad-isa-0000 2>/dev/null | awk '/temp1_input/ {printf "%.0f", $2}'
+}
+
+dwmstatus() {
+  xsetroot -name "$(bright) | $(vol) | $(conn) | $(cpu) $(temp) | $(bat) | $(dt)" > /dev/null 2>&1
+}
+
+case "$1" in
+  --daemon)
+    while true; do
+      dwmstatus
+      sleep 10
+    done
+    ;;
+  restart)
+    pkill -f "dwmstatus --daemon"
+    "$0" --daemon &
+    ;;
+  *)
     dwmstatus
-    sleep 10
-  done
-else
-  dwmstatus
-fi
+    ;;
+esac
