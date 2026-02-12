@@ -20,11 +20,13 @@ __check_git_repo_nonempty() {
 }
 
 __git_current_branch() {
-  git symbolic-ref --short HEAD
+  git symbolic-ref --short HEAD 2>/dev/null || git describe --tags --exact-match HEAD 2>/dev/null || git rev-parse --short HEAD 2>/dev/null
 }
 
 __git_current_remote_track() {
-  git for-each-ref --format='%(upstream:short)' "$(git symbolic-ref -q HEAD)"
+  local ref
+  ref="$(git symbolic-ref -q HEAD 2>/dev/null)" || return
+  git for-each-ref --format='%(upstream:short)' "$ref"
 }
 
 __git_current_remote_count() {

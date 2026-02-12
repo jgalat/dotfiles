@@ -25,3 +25,6 @@ export HISTFILESIZE=1000000
 export PATH="${HOME}/.local/bin:$PATH"
 
 export PATH="$PATH:/home/jgalat/.local/bin"
+
+# opencode
+export PATH=/home/jgalat/.opencode/bin:$PATH
