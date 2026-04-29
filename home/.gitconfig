@@ -1,7 +1,7 @@
 [user]
 	name = Jorge Galat
 	email = jrgglt@gmail.com
-	signingkey = 3EFFFA4F225D1D39
+	signingkey = D506F3909D4C4EDCF0738ED8CC754A50798CD8C5
 [core]
 	editor = nvim
 	excludesfile = /home/jgalat/.gitignore_global
