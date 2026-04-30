@@ -2,6 +2,7 @@
 
 GPG_TTY="$(tty)"
 export GPG_TTY
+gpg-connect-agent updatestartuptty /bye >/dev/null 2>&1
 
 export HISTSIZE=1000000
 export HISTFILESIZE=1000000
