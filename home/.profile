@@ -24,6 +24,8 @@ PATH=$BUN_INSTALL/bin:$PATH
 PATH="$HOME/.ityfuzz/bin:$PATH"
 # shellcheck source=/dev/null
 PATH="$HOME/.claude/local:$PATH"
+# shellcheck source=/dev/null
+PATH="$HOME/.opencode/bin:$PATH"
 
 export PATH
 

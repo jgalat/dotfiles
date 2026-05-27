@@ -21,6 +21,3 @@ export HISTFILESIZE=1000000
 [ -s "$HOME/.cargo/env" ] && \. ~/.cargo/env
 # shellcheck source=/dev/null
 [ -s "$HOME/.ghcup/env" ] && \. "$HOME/.ghcup/env"
-
-# opencode
-export PATH=/home/jgalat/.opencode/bin:$PATH

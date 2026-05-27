@@ -2,7 +2,6 @@
 
 alias emacs="emacs -nw"
 alias vim="nvim"
-alias claude-cleanup='ps aux | grep "[c]laude" | awk "\$7 == \"?\" {print \$2}" | xargs kill -9 2>/dev/null'
 alias claude='claude --allow-dangerously-skip-permissions'
 alias npm=pnpm
 alias npx="pnpm dlx"
