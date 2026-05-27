@@ -29,7 +29,6 @@ export PATH
 
 export SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
 unset SSH_AGENT_PID
-gpg-connect-agent updatestartuptty /bye >/dev/null
 
 [ -s "$HOME/.bashrc" ] && \. ~/.bashrc
 
