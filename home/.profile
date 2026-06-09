@@ -7,25 +7,27 @@ export EDITOR="/usr/bin/nvim"
 export BROWSER="/usr/bin/firefox-bin"
 export _JAVA_AWT_WM_NONREPARENTING=1
 export NVM_DIR="$HOME/.nvm"
+export PNPM_HOME="$HOME/.local/share/pnpm"
 
-# shellcheck source=/dev/null
-PATH="$HOME/.cargo/bin:$PATH"
-# shellcheck source=/dev/null
-PATH="$HOME/.yarn/bin:$PATH"
-# shellcheck source=/dev/null
-PATH="$HOME/go/bin:$PATH"
-# shellcheck source=/dev/null
-PATH="$HOME/.foundry/bin:$PATH"
-# shellcheck source=/dev/null
-PATH="$(du "$HOME/.local/bin/" | cut -f2 | tr '\n' ':' | sed 's/:*$//'):$PATH"
-# shellcheck source=/dev/null
-PATH=$BUN_INSTALL/bin:$PATH
-# shellcheck source=/dev/null
-PATH="$HOME/.ityfuzz/bin:$PATH"
-# shellcheck source=/dev/null
-PATH="$HOME/.claude/local:$PATH"
-# shellcheck source=/dev/null
-PATH="$HOME/.opencode/bin:$PATH"
+prepend_path() {
+  case ":$PATH:" in
+    *":$1:"*) ;;
+    *) PATH="$1:$PATH" ;;
+  esac
+}
+
+prepend_path "$HOME/.cargo/bin"
+prepend_path "$HOME/.yarn/bin"
+prepend_path "$HOME/go/bin"
+prepend_path "$HOME/.foundry/bin"
+prepend_path "$HOME/.local/bin"
+prepend_path "$HOME/.local/bin/status"
+prepend_path "$HOME/.local/bin/tools"
+prepend_path "$BUN_INSTALL/bin"
+prepend_path "$HOME/.ityfuzz/bin"
+prepend_path "$HOME/.claude/local"
+prepend_path "$HOME/.opencode/bin"
+prepend_path "$PNPM_HOME/bin"
 
 export PATH
 

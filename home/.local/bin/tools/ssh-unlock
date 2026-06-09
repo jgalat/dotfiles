@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# Prime gpg-agent's SSH cache by triggering one key signature via an auth
+# attempt (default: GitHub). After this, non-interactive tools can use git
+# over SSH without a pinentry prompt until the cache expires
+# (see ~/.gnupg/gpg-agent.conf). Pass a different "user@host" to target it.
+
+HOST="${1:-git@github.com}"
+
+GPG_TTY="$(tty)"
+export GPG_TTY
+
+ssh -T "$HOST"

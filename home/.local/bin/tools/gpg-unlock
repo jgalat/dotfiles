@@ -1,0 +1,15 @@
+#!/bin/sh
+
+# Prime gpg-agent's cache for the signing key by making one dummy signature.
+# After this, non-interactive tools can `git commit -S` without a pinentry
+# prompt until the cache expires (see ~/.gnupg/gpg-agent.conf).
+
+GPG_TTY="$(tty)"
+export GPG_TTY
+
+if echo "gpg-unlock" | gpg --sign --output /dev/null 2>/dev/null; then
+  echo "unlocked"
+else
+  echo "failed" >&2
+  exit 1
+fi
