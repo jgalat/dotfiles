@@ -1,0 +1,19 @@
+#!/bin/sh
+
+# Report whether gpg-agent has the signing key's passphrase cached, WITHOUT
+# triggering a pinentry prompt. --pinentry-mode cancel makes a missing
+# passphrase fail immediately instead of popping up the curses pinentry.
+# Run before `git commit -S`; if it prints "locked", run gpg-unlock first.
+# Prints "unlocked" (exit 0) or "locked" (exit 1).
+
+signkey="$(git config --get user.signingkey 2>/dev/null)"
+
+set -- --batch --pinentry-mode cancel --sign --output /dev/null
+[ -n "$signkey" ] && set -- -u "$signkey" "$@"
+
+if echo "gpg-test" | gpg "$@" 2>/dev/null; then
+  echo "unlocked"
+else
+  echo "locked"
+  exit 1
+fi

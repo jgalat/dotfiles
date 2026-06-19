@@ -1,0 +1,38 @@
+#!/bin/sh
+
+# Report whether gpg-agent (with ssh support) has any configured SSH key
+# passphrase cached, WITHOUT triggering a pinentry prompt. It only queries the
+# agent's cache state via `keyinfo` and never requests a signature, so no
+# pinentry UI can appear. Run before `git push`/`git pull` over SSH; if it
+# prints "locked", run ssh-unlock first.
+# Prints "unlocked" (exit 0) or "locked" (exit 1); per-key detail on stderr.
+
+SSHCONTROL="${GNUPGHOME:-$HOME/.gnupg}/sshcontrol"
+
+[ -f "$SSHCONTROL" ] || { echo "locked"; exit 1; }
+
+grips="$(grep -v '^[[:space:]]*#' "$SSHCONTROL" \
+  | grep -v '^[[:space:]]*$' \
+  | sed 's/^[[:space:]]*!\{0,1\}//' \
+  | awk '{print $1}')"
+
+[ -n "$grips" ] || { echo "locked"; exit 1; }
+
+any=1
+for grip in $grips; do
+  cached="$(gpg-connect-agent "keyinfo $grip" /bye 2>/dev/null \
+    | awk '/^S KEYINFO/{print $7}')"
+  if [ "$cached" = "1" ]; then
+    echo "  $grip unlocked" >&2
+    any=0
+  else
+    echo "  $grip locked" >&2
+  fi
+done
+
+if [ "$any" -eq 0 ]; then
+  echo "unlocked"
+  exit 0
+fi
+echo "locked"
+exit 1
