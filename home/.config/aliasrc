@@ -5,3 +5,4 @@ alias vim="nvim"
 alias claude='claude --allow-dangerously-skip-permissions'
 alias npm=pnpm
 alias npx="pnpm dlx"
+alias transmission-oneshot='mkdir -p ~/transmission-downloads && docker run --rm -d --name transmission-oneshot -p 9091:9091 --tmpfs /config:rw,size=64m -e PUID=$(id -u) -e PGID=$(id -g) -v ~/transmission-downloads:/downloads lscr.io/linuxserver/transmission:latest'
