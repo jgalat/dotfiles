@@ -7,12 +7,15 @@ export EDITOR="/usr/bin/nvim"
 export BROWSER="/usr/bin/firefox-bin"
 export _JAVA_AWT_WM_NONREPARENTING=1
 export NVM_DIR="$HOME/.nvm"
+export NVM_SYMLINK_CURRENT=true
 export PNPM_HOME="$HOME/.local/share/pnpm"
 
 prepend_path() {
+  [ -d "$1" ] || return
+
   case ":$PATH:" in
     *":$1:"*) ;;
-    *) PATH="$1:$PATH" ;;
+    *) PATH="$1${PATH:+:$PATH}" ;;
   esac
 }
 
@@ -28,6 +31,7 @@ prepend_path "$HOME/.ityfuzz/bin"
 prepend_path "$HOME/.claude/local"
 prepend_path "$HOME/.opencode/bin"
 prepend_path "$PNPM_HOME/bin"
+prepend_path "$NVM_DIR/current/bin"
 
 export PATH
 
@@ -37,4 +41,3 @@ unset SSH_AGENT_PID
 [ -s "$HOME/.bashrc" ] && \. ~/.bashrc
 
 [ "$(tty)" = "/dev/tty1" ] && exec startx
-

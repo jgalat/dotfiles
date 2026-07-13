@@ -13,9 +13,14 @@ export HISTFILESIZE=1000000
 # shellcheck source=/dev/null
 [ -f "$HOME/.fzf.bash" ] && . ~/.fzf.bash
 
-# shellcheck source=/dev/null
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-# shellcheck source=/dev/null
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+nvm() {
+  unset -f nvm
+  # shellcheck source=/dev/null
+  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+  # shellcheck source=/dev/null
+  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+  nvm "$@"
+}
+
 # shellcheck source=/dev/null
 [ -s "$HOME/.ghcup/env" ] && \. "$HOME/.ghcup/env"

@@ -5,7 +5,6 @@ light -I &
 setxkbmap -layout us -variant altgr-intl &
 set-background &
 dwmstatus --daemon &
-battery_watcher &
 sxhkd &
 udiskie --no-tray &
 # xcompmgr -c -l0 -t0 -r0 -o.00 &

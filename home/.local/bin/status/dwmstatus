@@ -1,111 +1,187 @@
 #!/bin/sh
 
-dt() {
-  date +"%d/%m/%Y %H:%M"
-}
+for path in /sys/class/power_supply/BAT*; do
+  [ -d "$path" ] || continue
+  battery_path="$path"
+  break
+done
 
-bat() {
-  battery="$(acpi -b | head -n 1)"
-  capacity="$(echo "$battery" | grep -o -P '\d+%')"
-  remaining="$(echo "$battery" | grep -o -P '\d\d:\d\d')"
-
-  ac="$(acpi -a | grep -o -P 'on|off')"
-  status="-"
-  if [ "$ac" = "on" ]; then
-    status="+"
+for path in /sys/class/thermal/thermal_zone*; do
+  [ -r "$path/type" ] || continue
+  IFS= read -r type < "$path/type"
+  if [ "$type" = "x86_pkg_temp" ]; then
+    thermal_path="$path"
+    break
   fi
+done
 
-  ret="$status$capacity"
-  if [ -n "$remaining" ]; then
-    ret="${ret} (${remaining})"
-  fi
+update_battery() {
+  battery_value="--"
+  battery_capacity=""
+  battery_status=""
+  [ -n "$battery_path" ] || return
 
-  echo "$ret"
-}
+  IFS= read -r battery_capacity < "$battery_path/capacity"
+  IFS= read -r battery_status < "$battery_path/status"
 
-conn() {
-  ifaces="$(find /sys/class/net -type l -not -lname '*virtual*' -printf '%f\n')"
-  for iface in $ifaces; do
-    status="$(cat /sys/class/net/"${iface}"/operstate)"
-    if [ "$status" = "up" ]; then
-      append=""
-      if [ "$(echo "$iface" | cut -c1-1)" = "w" ]; then
-        append="<$(wpa_cli status | grep '^ssid=' | sed 's/^ssid=//')>"
-      else
-        append="[--]"
-      fi
-      iface_status="$iface_status ${append}"
+  charge="-"
+  for path in /sys/class/power_supply/AC*; do
+    [ -r "$path/online" ] || continue
+    IFS= read -r online < "$path/online"
+    if [ "$online" = "1" ]; then
+      charge="+"
+      break
     fi
   done
 
-  if [ -z "$iface_status" ]; then
-    iface_status="--/--"
+  remaining=""
+  if [ "$battery_status" = "Discharging" ]; then
+    IFS= read -r energy_now < "$battery_path/energy_now"
+    IFS= read -r power_now < "$battery_path/power_now"
+    if [ "$power_now" -gt 0 ]; then
+      remaining_minutes=$((energy_now * 60 / power_now))
+      remaining=$(printf ' (%02d:%02d)' "$((remaining_minutes / 60))" "$((remaining_minutes % 60))")
+    fi
   fi
 
-  vpn="$(sudo wg show interfaces)"
-  if [ -n "$vpn"  ]; then
-    iface_status="${iface_status} (${vpn})"
+  battery_value="${charge}${battery_capacity}%${remaining}"
+}
+
+update_brightness() {
+  brightness_value="--"
+  for path in /sys/class/backlight/*; do
+    [ -r "$path/brightness" ] || continue
+    IFS= read -r brightness < "$path/brightness"
+    IFS= read -r max_brightness < "$path/max_brightness"
+    [ "$max_brightness" -gt 0 ] || return
+    brightness_value=$((brightness * 100 / max_brightness))
+    return
+  done
+}
+
+update_connection() {
+  connection_value=""
+
+  for path in /sys/class/net/*; do
+    [ -e "$path/device" ] || continue
+    IFS= read -r state < "$path/operstate"
+    [ "$state" = "up" ] || continue
+
+    iface=${path##*/}
+    case "$iface" in
+      w*)
+        ssid=$(wpa_cli -i "$iface" status 2>/dev/null | awk -F= '$1 == "ssid" { print $2; exit }')
+        iface_value="<${ssid}>"
+        ;;
+      *) iface_value="[--]" ;;
+    esac
+
+    if [ -n "$connection_value" ]; then
+      connection_value="$connection_value $iface_value"
+    else
+      connection_value="$iface_value"
+    fi
+  done
+
+  [ -n "$connection_value" ] || connection_value="--/--"
+
+  vpn=$(sudo -n wg show interfaces 2>/dev/null)
+  [ -n "$vpn" ] && connection_value="$connection_value ($vpn)"
+}
+
+update_cpu() {
+  read -r _ user nice system idle iowait irq softirq steal _ < /proc/stat
+  total=$((user + nice + system + idle + iowait + irq + softirq + steal))
+  idle_total=$((idle + iowait))
+  cpu_value=0
+
+  if [ -n "$previous_total" ]; then
+    total_delta=$((total - previous_total))
+    idle_delta=$((idle_total - previous_idle))
+    [ "$total_delta" -gt 0 ] && cpu_value=$((100 * (total_delta - idle_delta) / total_delta))
   fi
 
-  iface_status="$(echo "$iface_status" | sed "s/^[[:space:]]//")"
-  echo "$iface_status"
+  previous_total=$total
+  previous_idle=$idle_total
 }
 
-vol() {
-  volume="$(wpctl get-volume @DEFAULT_AUDIO_SINK@ | awk '/MUTED/ {print 0; exit} {printf "%.0f\n", $2 * 100}')"
+update_temperature() {
+  temperature_value="--"
+  [ -n "$thermal_path" ] || return
+  IFS= read -r temperature < "$thermal_path/temp"
+  temperature_value=$((temperature / 1000))
+}
 
-  pods="$(airpods info)"
-  if [ "$pods" != 'off' ];then
-    profile=" (bt $pods)"
+update_volume() {
+  volume_value=$(wpctl get-volume @DEFAULT_AUDIO_SINK@ 2>/dev/null | awk '/MUTED/ { print 0; exit } { printf "%.0f", $2 * 100 }')
+  [ -n "$volume_value" ] || volume_value="--"
+
+  sink=$(wpctl inspect @DEFAULT_AUDIO_SINK@ 2>/dev/null)
+  case "$sink" in
+    *AirPods*|*bluez*|*2C_18_09_E3_03_33*) volume_value="$volume_value (bt on)" ;;
+  esac
+}
+
+update_recording() {
+  recording_value=$(rec status --dwm 2>/dev/null)
+  [ -n "$recording_value" ] && recording_value="$recording_value | "
+}
+
+update_status() {
+  update_battery
+  update_brightness
+  update_temperature
+  update_volume
+  update_recording
+  datetime_value=$(date +"%d/%m/%Y %H:%M")
+
+  xsetroot -name "${recording_value}${brightness_value} | ${volume_value} | ${connection_value} | ${cpu_value} ${temperature_value} | ${battery_value} | ${datetime_value}"
+}
+
+check_low_battery() {
+  [ -n "$battery_capacity" ] || return
+
+  if [ "$battery_status" != "Discharging" ] || [ "$battery_capacity" -ge 12 ]; then
+    low_battery_notified=0
+    return
   fi
 
-  echo "$volume$profile"
+  [ "$battery_capacity" -lt 10 ] || return
+  [ "$low_battery_notified" = "0" ] || return
+
+  notify-send --urgency=critical "Battery" "Low battery!"
+  low_battery_notified=1
 }
 
-bright() {
-  light -G | sed 's/\.00$//'
-}
+run_daemon() {
+  low_battery_notified=0
+  connection_ticks=0
+  update_cpu
+  update_connection
 
-cpu() {
-  read -r _ a b c d rest < /proc/stat
-  total=$((a + b + c + d))
-  idle=$d
-  sleep 0.2
-  read -r _ a b c d rest < /proc/stat
-  total2=$((a + b + c + d))
-  idle2=$d
-  echo "$((100 * ((total2 - total) - (idle2 - idle)) / (total2 - total)))"
-}
+  while true; do
+    if [ "$connection_ticks" -ge 6 ]; then
+      update_connection
+      connection_ticks=0
+    fi
 
-temp() {
-  sensors -u thinkpad-isa-0000 2>/dev/null | awk '/temp1_input/ {printf "%.0f", $2}'
-}
-
-recording() {
-  rec status --dwm 2>/dev/null
-}
-
-dwmstatus() {
-  rec_status="$(recording)"
-  if [ -n "$rec_status" ]; then
-    rec_status="$rec_status | "
-  fi
-
-  xsetroot -name "${rec_status}$(bright) | $(vol) | $(conn) | $(cpu) $(temp) | $(bat) | $(dt)" > /dev/null 2>&1
+    update_status
+    check_low_battery
+    sleep 10
+    update_cpu
+    connection_ticks=$((connection_ticks + 1))
+  done
 }
 
 case "$1" in
-  --daemon)
-    while true; do
-      dwmstatus
-      sleep 10
-    done
-    ;;
+  --daemon) run_daemon ;;
   restart)
-    pkill -f "dwmstatus --daemon"
+    pkill -f "^/bin/sh $0 --daemon$" 2>/dev/null || true
     "$0" --daemon &
     ;;
   *)
-    dwmstatus
+    update_cpu
+    update_connection
+    update_status
     ;;
 esac
