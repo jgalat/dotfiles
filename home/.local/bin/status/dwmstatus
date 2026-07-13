@@ -81,8 +81,17 @@ temp() {
   sensors -u thinkpad-isa-0000 2>/dev/null | awk '/temp1_input/ {printf "%.0f", $2}'
 }
 
+recording() {
+  rec status --dwm 2>/dev/null
+}
+
 dwmstatus() {
-  xsetroot -name "$(bright) | $(vol) | $(conn) | $(cpu) $(temp) | $(bat) | $(dt)" > /dev/null 2>&1
+  rec_status="$(recording)"
+  if [ -n "$rec_status" ]; then
+    rec_status="$rec_status | "
+  fi
+
+  xsetroot -name "${rec_status}$(bright) | $(vol) | $(conn) | $(cpu) $(temp) | $(bat) | $(dt)" > /dev/null 2>&1
 }
 
 case "$1" in
