@@ -4,6 +4,7 @@ gentoo-pipewire-launcher &
 light -I &
 setxkbmap -layout us -variant altgr-intl &
 set-background &
+airpods-battery --address 2C:18:09:E3:03:33 &
 dwmstatus --daemon &
 sxhkd &
 udiskie --no-tray &

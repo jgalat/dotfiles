@@ -118,7 +118,18 @@ update_volume() {
 
   sink=$(wpctl inspect @DEFAULT_AUDIO_SINK@ 2>/dev/null)
   case "$sink" in
-    *AirPods*|*bluez*|*2C_18_09_E3_03_33*) volume_value="$volume_value (bt on)" ;;
+    *AirPods*|*bluez*|*2C_18_09_E3_03_33*)
+      airpods_battery=""
+      if [ -n "$XDG_RUNTIME_DIR" ] && [ -r "$XDG_RUNTIME_DIR/airpods-battery" ]; then
+        IFS= read -r airpods_battery < "$XDG_RUNTIME_DIR/airpods-battery"
+      fi
+
+      if [ -n "$airpods_battery" ]; then
+        volume_value="$volume_value (bt $airpods_battery)"
+      else
+        volume_value="$volume_value (bt on)"
+      fi
+      ;;
   esac
 }
 
