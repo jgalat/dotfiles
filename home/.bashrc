@@ -5,6 +5,7 @@ export GPG_TTY
 
 export HISTSIZE=1000000
 export HISTFILESIZE=1000000
+export HISTCONTROL=ignoreboth
 
 # shellcheck source=home/.config/aliasrc
 [ -f "$HOME/.config/aliasrc" ] && . ~/.config/aliasrc
