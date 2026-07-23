@@ -1,38 +1,56 @@
 #!/bin/sh
 
-# Report whether gpg-agent (with ssh support) has any configured SSH key
-# passphrase cached, WITHOUT triggering a pinentry prompt. It only queries the
-# agent's cache state via `keyinfo` and never requests a signature, so no
-# pinentry UI can appear. Run before `git push`/`git pull` over SSH; if it
-# prints "locked", run ssh-unlock first.
-# Prints "unlocked" (exit 0) or "locked" (exit 1); per-key detail on stderr.
+usage() {
+  echo "usage: ssh-test [personal|key-name]" >&2
+  exit 2
+}
 
-SSHCONTROL="${GNUPGHOME:-$HOME/.gnupg}/sshcontrol"
+[ "$#" -le 1 ] || usage
 
-[ -f "$SSHCONTROL" ] || { echo "locked"; exit 1; }
+SSH_DIR="${HOME}/.ssh"
+name="${1:-personal}"
 
-grips="$(grep -v '^[[:space:]]*#' "$SSHCONTROL" \
-  | grep -v '^[[:space:]]*$' \
-  | sed 's/^[[:space:]]*!\{0,1\}//' \
-  | awk '{print $1}')"
+case "$name" in
+  personal)
+    key="$SSH_DIR/id_ed25519.pub"
+    ;;
+  ""|*[!A-Za-z0-9._-]*)
+    usage
+    ;;
+  *)
+    key="$SSH_DIR/id_$name.pub"
+    if [ ! -f "$key" ]; then
+      key="$SSH_DIR/id_ed_$name.pub"
+    fi
+    ;;
+esac
 
-[ -n "$grips" ] || { echo "locked"; exit 1; }
+if [ ! -f "$key" ]; then
+  echo "ssh-test: key not found for '$name'" >&2
+  exit 1
+fi
 
-any=1
-for grip in $grips; do
-  cached="$(gpg-connect-agent "keyinfo $grip" /bye 2>/dev/null \
-    | awk '/^S KEYINFO/{print $7}')"
-  if [ "$cached" = "1" ]; then
-    echo "  $grip unlocked" >&2
-    any=0
-  else
-    echo "  $grip locked" >&2
-  fi
-done
+fingerprint="$(ssh-keygen -E md5 -lf "$key" 2>/dev/null \
+  | awk '{print $2}')"
 
-if [ "$any" -eq 0 ]; then
-  echo "unlocked"
+if [ -z "$fingerprint" ]; then
+  echo "ssh-test: could not read '$key'" >&2
+  exit 1
+fi
+
+keyinfo="$(gpg-connect-agent "keyinfo --ssh-list --ssh-fpr=md5" /bye 2>/dev/null)" || {
+  echo "ssh-test: could not query gpg-agent" >&2
+  exit 1
+}
+
+cached="$(printf '%s\n' "$keyinfo" \
+  | awk -v fingerprint="$fingerprint" \
+    '$1 == "S" && $2 == "KEYINFO" && $9 == fingerprint {print $7}')"
+
+if [ "$cached" = "1" ]; then
+  echo "  $name unlocked" >&2
   exit 0
 fi
-echo "locked"
+
+echo "  $name locked" >&2
 exit 1

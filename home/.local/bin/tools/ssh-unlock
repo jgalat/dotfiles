@@ -1,13 +1,46 @@
 #!/bin/sh
 
-# Prime gpg-agent's SSH cache by triggering one key signature via an auth
-# attempt (default: GitHub). After this, non-interactive tools can use git
-# over SSH without a pinentry prompt until the cache expires
-# (see ~/.gnupg/gpg-agent.conf). Pass a different "user@host" to target it.
+usage() {
+  echo "usage: ssh-unlock [personal|key-name|user@host]" >&2
+  exit 2
+}
 
-HOST="${1:-git@github.com}"
+[ "$#" -le 1 ] || usage
+
+SSH_DIR="${HOME}/.ssh"
+name="${1:-personal}"
+
+case "$name" in
+  *@*)
+    GPG_TTY="$(tty)"
+    export GPG_TTY
+
+    ssh -T "$name"
+    exit
+    ;;
+esac
+
+case "$name" in
+  personal)
+    key="$SSH_DIR/id_ed25519.pub"
+    ;;
+  ""|*[!A-Za-z0-9._-]*)
+    usage
+    ;;
+  *)
+    key="$SSH_DIR/id_$name.pub"
+    if [ ! -f "$key" ]; then
+      key="$SSH_DIR/id_ed_$name.pub"
+    fi
+    ;;
+esac
+
+if [ ! -f "$key" ]; then
+  echo "ssh-unlock: key not found for '$name'" >&2
+  exit 1
+fi
 
 GPG_TTY="$(tty)"
 export GPG_TTY
 
-ssh -T "$HOST"
+ssh-add -T "$key"
