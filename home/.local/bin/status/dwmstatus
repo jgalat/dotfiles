@@ -120,8 +120,8 @@ update_volume() {
   case "$sink" in
     *AirPods*|*bluez*|*2C_18_09_E3_03_33*)
       airpods_battery=""
-      if [ -n "$XDG_RUNTIME_DIR" ] && [ -r "$XDG_RUNTIME_DIR/airpods-battery" ]; then
-        IFS= read -r airpods_battery < "$XDG_RUNTIME_DIR/airpods-battery"
+      if [ -n "$XDG_RUNTIME_DIR" ] && [ -r "$XDG_RUNTIME_DIR/airpods-controller/battery" ]; then
+        IFS= read -r airpods_battery < "$XDG_RUNTIME_DIR/airpods-controller/battery"
       fi
 
       if [ -n "$airpods_battery" ]; then
