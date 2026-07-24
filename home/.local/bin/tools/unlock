@@ -4,6 +4,6 @@ status=0
 
 gpg-unlock || status=1
 ssh-unlock "$@" || :
-ssh-test || status=1
+ssh-test "$@" || status=1
 
 exit "$status"
