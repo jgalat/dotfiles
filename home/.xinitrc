@@ -2,6 +2,7 @@
 
 # Single session bus for the whole X session; dies with X (no orphaned bus).
 eval "$(dbus-launch --sh-syntax --exit-with-session)"
+eval "$(gnome-keyring-daemon --start --components=secrets)"
 
 #shellcheck disable=SC1090
 [ -f "$HOME/.xprofile" ] && . ~/.xprofile
