@@ -1,5 +1,5 @@
 # slock version
-VERSION = 1.5
+VERSION = 1.7
 
 # Customize below to fit your system
 
@@ -27,6 +27,3 @@ COMPATSRC = explicit_bzero.c
 #CPPFLAGS = -DVERSION=\"${VERSION}\" -D_BSD_SOURCE -D_NETBSD_SOURCE
 # On OpenBSD set COMPATSRC to empty
 #COMPATSRC =
-
-# compiler and linker
-CC = cc
