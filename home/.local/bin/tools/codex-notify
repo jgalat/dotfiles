@@ -1,0 +1,39 @@
+#!/bin/sh
+
+payload="${1:-}"
+[ -n "$payload" ] || exit 0
+
+type="$(printf '%s' "$payload" | jq -r '.type // empty')" || exit 0
+[ "$type" = "agent-turn-complete" ] || exit 0
+
+cwd="$(printf '%s' "$payload" | jq -r '.cwd // empty')"
+project="${cwd##*/}"
+[ -n "$project" ] || project="Codex"
+
+target="$project"
+if [ -n "${TMUX_PANE:-}" ] && command -v tmux >/dev/null; then
+  tmux_target="$(tmux display-message -p -t "$TMUX_PANE" '#S:#I.#P' 2>/dev/null)"
+  [ -n "$tmux_target" ] && target="$target · $tmux_target"
+fi
+
+focused=0
+if [ -n "${WINDOWID:-}" ] && command -v xprop >/dev/null; then
+  active_window="$(xprop -root _NET_ACTIVE_WINDOW 2>/dev/null | awk '{print $NF}')"
+  origin_window="$(printf '0x%x' "$WINDOWID")"
+
+  if [ "$active_window" = "$origin_window" ]; then
+    if [ -n "${TMUX_PANE:-}" ] && command -v tmux >/dev/null; then
+      tmux_focused="$(tmux display-message -p -t "$TMUX_PANE" \
+        '#{window_active}:#{pane_active}' 2>/dev/null)"
+      [ "$tmux_focused" = "1:1" ] && focused=1
+    else
+      focused=1
+    fi
+  fi
+fi
+
+[ "$focused" -eq 1 ] || \
+  notify-send --app-name=Codex --icon=dialog-information "Codex ready: $target"
+
+sound=/usr/share/sounds/freedesktop/stereo/complete.oga
+[ -f "$sound" ] && paplay "$sound" >/dev/null 2>&1
