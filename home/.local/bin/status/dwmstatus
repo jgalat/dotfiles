@@ -15,6 +15,112 @@ for path in /sys/class/thermal/thermal_zone*; do
   fi
 done
 
+queue_url=${DWMSTATUS_QUEUE_URL:-https://dotero.fmcurti.com.ar/api/ranked/queue-status}
+queue_join_url="https://dotero.fmcurti.com.ar/#/ranked"
+queue_count=0
+queue_deadline=""
+queue_available=0
+queue_poll_interval=60
+
+update_queue() {
+  queue_response=$(curl --fail --silent --show-error --max-time 5 "$queue_url" 2>/dev/null) || {
+    queue_available=0
+    [ "$queue_poll_interval" -le 10 ] || queue_poll_interval=10
+    return
+  }
+
+  new_queue_count=$(printf '%s' "$queue_response" | jq -er '.count | select(type == "number" and . >= 0 and floor == .)' 2>/dev/null) || {
+    queue_available=0
+    return
+  }
+  new_queue_deadline=$(printf '%s' "$queue_response" | jq -er '
+    if .deadline == null then
+      ""
+    else
+      .deadline | select(type == "number" and . >= 0 and floor == .) | tostring
+    end
+  ' 2>/dev/null) || {
+    queue_available=0
+    return
+  }
+
+  queue_count=$new_queue_count
+  queue_deadline=$new_queue_deadline
+  queue_available=1
+
+  if [ "$queue_count" -ge 3 ]; then
+    queue_poll_interval=5
+  elif [ "$queue_count" -ge 1 ]; then
+    queue_poll_interval=10
+  else
+    queue_poll_interval=60
+  fi
+}
+
+queue_seconds_remaining() {
+  if [ -z "$queue_deadline" ]; then
+    printf '0'
+    return
+  fi
+
+  now_ms=$(($(date +%s) * 1000))
+  remaining_ms=$((queue_deadline - now_ms))
+  if [ "$remaining_ms" -le 0 ]; then
+    printf '0'
+    return
+  fi
+
+  printf '%s' "$((remaining_ms / 1000))"
+}
+
+update_queue_value() {
+  if [ "$queue_available" != "1" ]; then
+    queue_value="DOTA ?/4"
+    return
+  fi
+
+  queue_value="DOTA ${queue_count}/4"
+  if [ "$queue_count" -ge 4 ]; then
+    queue_value="$queue_value $(queue_seconds_remaining)s"
+  fi
+}
+
+send_queue_notification() {
+  urgency=$1
+  title=$2
+  message=$3
+  action=$(notify-send --urgency="$urgency" --action="open=Open ranked queue" "$title" "$message")
+  [ "$action" = "open" ] || return
+
+  xdg-open "$queue_join_url" >/dev/null 2>&1
+}
+
+check_queue_notifications() {
+  [ "$queue_available" = "1" ] || return
+  [ "$queue_count" != "$queue_notified_count" ] || return
+
+  queue_notified_count=$queue_count
+  [ "$queue_count" -ge 2 ] || return
+
+  if [ "$queue_count" -ge 4 ]; then
+    remaining=$(queue_seconds_remaining)
+    if [ "$remaining" -gt 0 ]; then
+      message="Match starts in ${remaining}s."
+    else
+      message="Match is starting now."
+    fi
+    send_queue_notification critical "Dota queue: ${queue_count}/4" "$message" &
+    return
+  fi
+
+  if [ "$queue_count" -eq 3 ]; then
+    send_queue_notification normal "Dota queue: 3/4" "One more player needed." &
+    return
+  fi
+
+  send_queue_notification normal "Dota queue: 2/4" "Two players are waiting." &
+}
+
 update_battery() {
   battery_value="--"
   battery_capacity=""
@@ -144,9 +250,10 @@ update_status() {
   update_temperature
   update_volume
   update_recording
+  update_queue_value
   datetime_value=$(date +"%d/%m/%Y %H:%M")
 
-  xsetroot -name "${recording_value}${brightness_value} | ${volume_value} | ${connection_value} | ${cpu_value} ${temperature_value} | ${battery_value} | ${datetime_value}"
+  xsetroot -name "${queue_value} | ${recording_value}${brightness_value} | ${volume_value} | ${connection_value} | ${cpu_value} ${temperature_value} | ${battery_value} | ${datetime_value}"
 }
 
 check_low_battery() {
@@ -166,21 +273,35 @@ check_low_battery() {
 
 run_daemon() {
   low_battery_notified=0
-  connection_ticks=0
+  queue_notified_count=-1
+  queue_elapsed=0
+  connection_elapsed=0
   update_cpu
   update_connection
+  update_queue
+  check_queue_notifications
 
   while true; do
-    if [ "$connection_ticks" -ge 6 ]; then
+    if [ "$connection_elapsed" -ge 60 ]; then
       update_connection
-      connection_ticks=0
+      connection_elapsed=0
     fi
 
     update_status
     check_low_battery
-    sleep 10
+
+    sleep_seconds=10
+    [ "$queue_count" -ge 3 ] && sleep_seconds=5
+    sleep "$sleep_seconds"
+
     update_cpu
-    connection_ticks=$((connection_ticks + 1))
+    connection_elapsed=$((connection_elapsed + sleep_seconds))
+    queue_elapsed=$((queue_elapsed + sleep_seconds))
+    if [ "$queue_elapsed" -ge "$queue_poll_interval" ]; then
+      update_queue
+      check_queue_notifications
+      queue_elapsed=0
+    fi
   done
 }
 
@@ -193,6 +314,7 @@ case "$1" in
   *)
     update_cpu
     update_connection
+    update_queue
     update_status
     ;;
 esac
