@@ -1,0 +1,175 @@
+#!/bin/sh
+
+queue_url=${DOTERO_QUEUE_URL:-https://dotero.fmcurti.com.ar/api/ranked/queue-status}
+queue_join_url="https://dotero.fmcurti.com.ar/#/ranked"
+queue_cache=${DOTERO_QUEUE_CACHE:-${XDG_RUNTIME_DIR:-/tmp}/dotero-queue-$(id -u)}
+queue_count=0
+queue_deadline=""
+queue_available=0
+queue_poll_interval=60
+
+write_queue_cache() {
+  cache_deadline=${queue_deadline:--}
+  queue_cache_temp=$(mktemp "${queue_cache}.XXXXXX") || return
+  printf '%s %s %s\n' "$queue_available" "$queue_count" "$cache_deadline" > "$queue_cache_temp"
+  mv "$queue_cache_temp" "$queue_cache"
+}
+
+read_queue_cache() {
+  [ -r "$queue_cache" ] || return
+  IFS=' ' read -r cached_available cached_count cached_deadline < "$queue_cache" || return
+
+  case "$cached_available" in
+    0|1) ;;
+    *) return ;;
+  esac
+  case "$cached_count" in
+    ''|*[!0-9]*) return ;;
+  esac
+  if [ "$cached_deadline" = "-" ]; then
+    cached_deadline=""
+  else
+    case "$cached_deadline" in
+      ''|*[!0-9]*) return ;;
+    esac
+  fi
+
+  queue_available=$cached_available
+  queue_count=$cached_count
+  queue_deadline=$cached_deadline
+}
+
+set_queue_unavailable() {
+  queue_available=0
+  queue_poll_interval=10
+  write_queue_cache
+}
+
+update_queue() {
+  queue_response=$(curl --fail --silent --show-error --max-time 5 "$queue_url" 2>/dev/null) || {
+    set_queue_unavailable
+    return
+  }
+
+  new_queue_count=$(printf '%s' "$queue_response" | jq -er '.count | select(type == "number" and . >= 0 and floor == .)' 2>/dev/null) || {
+    set_queue_unavailable
+    return
+  }
+  new_queue_deadline=$(printf '%s' "$queue_response" | jq -er '
+    if .deadline == null then
+      ""
+    else
+      .deadline | select(type == "number" and . >= 0 and floor == .) | tostring
+    end
+  ' 2>/dev/null) || {
+    set_queue_unavailable
+    return
+  }
+
+  queue_count=$new_queue_count
+  queue_deadline=$new_queue_deadline
+  queue_available=1
+
+  if [ "$queue_count" -ge 3 ]; then
+    queue_poll_interval=5
+  elif [ "$queue_count" -ge 1 ]; then
+    queue_poll_interval=10
+  else
+    queue_poll_interval=60
+  fi
+
+  write_queue_cache
+}
+
+queue_seconds_remaining() {
+  if [ -z "$queue_deadline" ]; then
+    printf '0'
+    return
+  fi
+
+  now_ms=$(($(date +%s) * 1000))
+  remaining_ms=$((queue_deadline - now_ms))
+  if [ "$remaining_ms" -le 0 ]; then
+    printf '0'
+    return
+  fi
+
+  printf '%s' "$((remaining_ms / 1000))"
+}
+
+print_queue_status() {
+  if [ "$queue_available" != "1" ]; then
+    printf 'DOTA ?/4\n'
+    return
+  fi
+
+  if [ "$queue_count" -ge 4 ]; then
+    printf 'DOTA %s/4 %ss\n' "$queue_count" "$(queue_seconds_remaining)"
+    return
+  fi
+
+  printf 'DOTA %s/4\n' "$queue_count"
+}
+
+send_queue_notification() {
+  urgency=$1
+  title=$2
+  message=$3
+  action=$(notify-send --urgency="$urgency" --action="open=Open ranked queue" "$title" "$message")
+  [ "$action" = "open" ] || return
+
+  xdg-open "$queue_join_url" >/dev/null 2>&1
+}
+
+check_queue_notifications() {
+  [ "$queue_available" = "1" ] || return
+  [ "$queue_count" != "$queue_notified_count" ] || return
+
+  queue_notified_count=$queue_count
+  [ "$queue_count" -ge 2 ] || return
+
+  if [ "$queue_count" -ge 4 ]; then
+    remaining=$(queue_seconds_remaining)
+    if [ "$remaining" -gt 0 ]; then
+      message="Match starts in ${remaining}s."
+    else
+      message="Match is starting now."
+    fi
+    send_queue_notification critical "Dota queue: ${queue_count}/4" "$message" &
+    return
+  fi
+
+  if [ "$queue_count" -eq 3 ]; then
+    send_queue_notification normal "Dota queue: 3/4" "One more player needed." &
+    return
+  fi
+
+  send_queue_notification normal "Dota queue: 2/4" "Two players are waiting." &
+}
+
+run_daemon() {
+  queue_notified_count=-1
+
+  while true; do
+    update_queue
+    check_queue_notifications
+    dwmstatus >/dev/null 2>&1
+    sleep "$queue_poll_interval"
+  done
+}
+
+case "$1" in
+  --daemon) run_daemon ;;
+  restart)
+    pkill -f "^/bin/sh $0 --daemon$" 2>/dev/null || true
+    "$0" --daemon &
+    ;;
+  status)
+    read_queue_cache
+    print_queue_status
+    ;;
+  *)
+    update_queue
+    print_queue_status
+    ;;
+esac
