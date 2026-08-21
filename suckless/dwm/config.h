@@ -27,7 +27,7 @@ static const Rule rules[] = {
 	 */
 	/* class      instance    title       tags mask     isfloating   monitor */
 	{ "firefox",  NULL,       NULL,       1 << 2,       0,           -1 },
-	{ "zoom",     "zoom",     NULL,       0,            1,           -1 },
+	{ "SteamLink", NULL,      NULL,       0,            0,            1 },
 };
 
 /* layout(s) */
